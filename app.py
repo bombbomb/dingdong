@@ -25,7 +25,6 @@ def play_door_bell():
 while True:
     get_resp = client.receive_message(
         QueueUrl=queue_url,
-        VisibilityTimeout=30,
         WaitTimeSeconds=20
     )
 
@@ -35,9 +34,5 @@ while True:
             QueueUrl=queue_url,
             ReceiptHandle=msg['ReceiptHandle']
         )
+        print("Ding Dong!")
         play_door_bell()
-    else:
-        print("Nothing...")
-
-
-
