@@ -1,20 +1,26 @@
 import boto3
 import sys
-import pyglet
-
-client = boto3.client('sqs')
+import subprocess
 
 args = sys.argv
 
-if len(args) == 1:
-    print("You must pass in a queue_url")
+if len(args) < 5:
+    print("You must pass arguments in order: queue_url, aws key, aws secret, aws region")
     exit()
 
 queue_url = args[1]
+key = args[2]
+secret = args[3]
+region = args[4]
+
+client = boto3.client(
+    'sqs',
+    aws_access_key_id=key,
+    aws_secret_access_key=secret,
+    region_name=region
+)
 
 print("Connecting to Queue URL: " + queue_url)
-
-sound = pyglet.resource.media('doorbell.wav', streaming=False)
 
 while True:
     get_resp = client.receive_message(
@@ -29,4 +35,4 @@ while True:
             ReceiptHandle=msg['ReceiptHandle']
         )
         print("Ding Dong!")
-        sound.play()
+        subprocess.call(['aplay -fdat doorbell.wav'], shell=True)
