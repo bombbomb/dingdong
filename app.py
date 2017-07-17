@@ -1,6 +1,6 @@
 import boto3
-import pygame
 import sys
+import pyglet
 
 client = boto3.client('sqs')
 
@@ -14,13 +14,7 @@ queue_url = args[1]
 
 print("Connecting to Queue URL: " + queue_url)
 
-
-def play_door_bell():
-    pygame.mixer.init()
-    pygame.mixer.music.load("doorbell.mp3")
-    pygame.mixer.music.play()
-    while pygame.mixer.music.get_busy():
-        continue
+sound = pyglet.resource.media('doorbell.wav', streaming=False)
 
 while True:
     get_resp = client.receive_message(
@@ -35,4 +29,4 @@ while True:
             ReceiptHandle=msg['ReceiptHandle']
         )
         print("Ding Dong!")
-        play_door_bell()
+        sound.play()
